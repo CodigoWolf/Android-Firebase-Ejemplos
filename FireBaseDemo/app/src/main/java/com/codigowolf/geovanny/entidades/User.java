@@ -5,15 +5,25 @@ package com.codigowolf.geovanny.entidades;
  */
 
 public class User {
+    String userid;
     String username;
     String edad;
 
     public User() {
     }
 
-    public User(String username, String edad) {
+    public User(String userid, String username, String edad) {
+        this.userid = userid;
         this.username = username;
         this.edad = edad;
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 
     public String getUsername() {
@@ -35,7 +45,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "username='" + username + '\'' +
+                "userid='" + userid + '\'' +
+                ", username='" + username + '\'' +
                 ", edad='" + edad + '\'' +
                 '}';
     }

@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.webkit.ConsoleMessage;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -22,7 +21,7 @@ import java.util.List;
 public class Inicio extends AppCompatActivity {
 
     private TextView mensajetv;
-    private EditText mensajeet;
+    private EditText useridEt, usernameEt, edadEt;
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference();/*Obtener referencia a la raíz*/
     DatabaseReference mensajeRef = ref.child("users");/*Obtener referencia a una rama*/
@@ -32,7 +31,9 @@ public class Inicio extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio);
         mensajetv = (TextView) findViewById(R.id.mensajetv);
-        mensajeet = (EditText) findViewById(R.id.mensajeet);
+        useridEt = (EditText) findViewById(R.id.useridEt);
+        usernameEt = (EditText) findViewById(R.id.usernameEt);
+        edadEt = (EditText) findViewById(R.id.edadEt);
     }
 
     @Override
@@ -47,14 +48,12 @@ public class Inicio extends AppCompatActivity {
                 /*User users = dataSnapshot.getValue(User.class);
                 String keys = dataSnapshot.getKey();*/
 
-                List users = new ArrayList();
+                List<User> users = new ArrayList<User>();
                 for (DataSnapshot child_user : dataSnapshot.getChildren()) {
                     User user = child_user.getValue(User.class);
                     users.add(user);
                 }
-
-                Log.d( "LISTAAAAA:", Arrays.asList(users).toString());
-
+                Log.d("Valores desde Firebase", Arrays.asList(users).toString());
                 mensajetv.setText(Arrays.asList(users).toString());
             }
 
@@ -63,28 +62,33 @@ public class Inicio extends AppCompatActivity {
 
             }
         });
-
     }
 
     public void agregar(View view){
-        //String mensaje = mensajeet.getText().toString();
-        User user = new User("aabarca", "52");
-        String userId = "3";
-        //mensajeRef.child("users").child(userId).setValue( user );
-        mensajeRef.child(userId).setValue( user );
-        Log.d("Agregar: ", user.getUsername().toString());
-        /* Si quieres permitir que tus usuarios actualicen sus perfiles puedes
-        actualizar el nombre de usuario de la siguiente manera:*/
-        //mensajeRef.child("users").child(userId).child("username").setValue("grios");
-        //mensajeRef.setValue(mensaje);
-        mensajeet.setText("");
+        mensajeRef.child( getUserCompleteWithData().getUserid() ).setValue( getUserCompleteWithData() );
+        Log.d("Agregar: ", getUserCompleteWithData().toString());
+        limpiarCajasEntrada();
     }
 
     public void modificar(View view){
-        String username = mensajeet.getText().toString();
-        /*Especificando que campo de la base de datos modificar*/
-        //mensajeRef.child("users").child("2").child("username").setValue( username );
-        mensajeRef.child("2").child("username").setValue( username );
-        mensajeet.setText("");
+        mensajeRef.child(getUserCompleteWithData().getUserid()).setValue( getUserCompleteWithData());
+        Log.d("Modificar: ", getUserCompleteWithData().getUsername());
+        limpiarCajasEntrada();
+    }
+
+    public User getUserCompleteWithData(){
+        /*Obteniendo los valores de las cajas de entrada*/
+        String userid = useridEt.getText().toString(),
+                username = usernameEt.getText().toString(),
+                edad = edadEt.getText().toString();
+        /*Instanciar una variable de la clase User y pasar los parámetros correspondientes.*/
+        User user = new User(userid, username, edad);
+        return user;
+    }
+
+    public void limpiarCajasEntrada(){
+        useridEt.setText("");
+        usernameEt.setText("");
+        edadEt.setText("");
     }
 }
